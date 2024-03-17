@@ -3,7 +3,7 @@
 
 import { sql, relations } from "drizzle-orm";
 import {
-  index,
+  uniqueIndex,
   pgTableCreator,
   serial,
   timestamp,
@@ -19,10 +19,12 @@ import {
  */
 export const createTable = pgTableCreator((name) => `reddit-clone_${name}`);
 
-export const user = createTable("user", {
+export const users = createTable("users", {
   // clerk generated
-  id: varchar("id", { length: 256 }).primaryKey(),
-  name: varchar("name", { length: 256 }),
+  id: varchar("id", { length: 256 }).notNull().primaryKey(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  username: text("username"),
   email: varchar("email", { length: 256 }).notNull(),
   profilePicture: text("profile_picture"),
   createdAt: timestamp("created_at")
@@ -31,7 +33,7 @@ export const user = createTable("user", {
   updatedAt: timestamp("updatedAt"),
 });
 
-export const userRelations = relations(user, ({ many }) => ({
+export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts),
   comments: many(comments),
 }));
@@ -46,8 +48,8 @@ export const posts = createTable("post", {
   updatedAt: timestamp("updatedAt"),
 });
 
-export const postRelations = relations(posts, ({ one, many }) => ({
-  author: one(user),
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users),
   comments: many(comments),
 }));
 
@@ -60,8 +62,8 @@ export const comments = createTable("comments", {
   updatedAt: timestamp("updatedAt"),
 });
 
-export const commentRelations = relations(comments, ({ one, many }) => ({
-  author: one(user),
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  author: one(users),
   post: one(posts),
   subComments: many(comments),
 }));

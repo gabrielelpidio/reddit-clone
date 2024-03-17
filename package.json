@@ -7,7 +7,7 @@
     "build": "next build",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
-    "dev": "next dev",
+    "dev": "NODE_OPTIONS='--inspect' next dev",
     "lint": "next lint",
     "start": "next start"
   },
@@ -26,6 +26,7 @@
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
+    "svix": "^1.21.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
