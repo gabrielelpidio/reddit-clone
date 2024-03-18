@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import ContentTextarea from "./content-textarea";
 import { Button } from "./ui/button";
 import { Avatar, AvatarImage } from "./ui/avatar";
-import UserAvatar from "./user-avatar";
+import UserAvatar from "./current-user-avatar";
 import { Card } from "./ui/card";
 
 export function CreatePost() {
