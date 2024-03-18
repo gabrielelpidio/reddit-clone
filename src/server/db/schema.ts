@@ -8,7 +8,10 @@ import {
   timestamp,
   varchar,
   text,
+  numeric,
 } from "drizzle-orm/pg-core";
+
+import { createId } from "@paralleldrive/cuid2";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -38,7 +41,9 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const posts = createTable("post", {
-  id: serial("id").primaryKey(),
+  id: varchar("id", { length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
   title: varchar("title", { length: 256 }),
   content: text("content"),
   authorId: varchar("author_id", { length: 256 }).notNull(),
@@ -58,11 +63,13 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 }));
 
 export const comments = createTable("comments", {
-  id: serial("id").primaryKey(),
-  comment: varchar("name", { length: 256 }),
+  id: varchar("id", { length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  comment: varchar("name", { length: 256 }).notNull(),
   authorId: varchar("author_id", { length: 256 }).notNull(),
-  postId: serial("post_id").notNull(),
-  parentId: serial("parent_id"),
+  postId: varchar("post_id", { length: 128 }).notNull(),
+  parentId: varchar("parent_id", { length: 128 }),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
