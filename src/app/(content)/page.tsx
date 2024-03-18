@@ -6,9 +6,12 @@ import NavbarLink from "../_components/navbar/link";
 
 export default async function Home() {
   return (
-    <>
-      <CreatePost />
-      <Posts />
-    </>
+    <div className="flex">
+      <div className="w-[143px] flex-shrink flex-grow-0"></div>
+      <section className="mr-auto flex w-full max-w-[600px] flex-shrink-0 flex-col gap-10 py-6">
+        <CreatePost />
+        <Posts />
+      </section>
+    </div>
   );
 }

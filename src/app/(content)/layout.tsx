@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </SignedIn>
         </div>
       </aside>
-      <main>{children}</main>
+      <main className="w-full flex-shrink flex-grow">{children}</main>
     </div>
   );
 }
