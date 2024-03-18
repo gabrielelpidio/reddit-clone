@@ -40,8 +40,9 @@ export const usersRelations = relations(users, ({ many }) => ({
 
 export const posts = createTable("post", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 256 }),
+  title: varchar("title", { length: 256 }),
   content: text("content"),
+  authorId: varchar("author_id", { length: 256 }).notNull(),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -49,21 +50,34 @@ export const posts = createTable("post", {
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
-  author: one(users),
+  author: one(users, { fields: [posts.authorId], references: [users.id] }),
   comments: many(comments),
 }));
 
 export const comments = createTable("comments", {
   id: serial("id").primaryKey(),
   comment: varchar("name", { length: 256 }),
+  authorId: varchar("author_id", { length: 256 }).notNull(),
+  postId: serial("post_id").notNull(),
+  parentId: serial("parent_id"),
   createdAt: timestamp("created_at")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
   updatedAt: timestamp("updatedAt"),
 });
 
-export const commentsRelations = relations(comments, ({ one, many }) => ({
-  author: one(users),
-  post: one(posts),
-  subComments: many(comments),
+export const commentHierarchyRelations = relations(
+  comments,
+  ({ one, many }) => ({
+    parent: one(comments, {
+      fields: [comments.parentId],
+      references: [comments.id],
+    }),
+    children: many(comments),
+  }),
+);
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  author: one(users, { fields: [comments.authorId], references: [users.id] }),
+  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
 }));
