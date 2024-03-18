@@ -1,5 +1,7 @@
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { CreatePost } from "./_components/create-post";
+import Posts from "./_components/posts";
 
 export default async function Home() {
   return (
@@ -10,6 +12,10 @@ export default async function Home() {
       <SignedIn>
         <UserButton />
       </SignedIn>
+      <section>
+        <CreatePost />
+        <Posts />
+      </section>
     </main>
   );
 }

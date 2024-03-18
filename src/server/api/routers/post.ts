@@ -1,7 +1,11 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { posts } from "~/server/db/schema";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
+import { posts, postsRelations } from "~/server/db/schema";
 
 export const postRouter = createTRPCRouter({
   hello: publicProcedure
@@ -12,14 +16,20 @@ export const postRouter = createTRPCRouter({
       };
     }),
 
-  create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().trim().min(1).max(256),
+        content: z.string().trim().min(1),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      await ctx.db.insert(posts).values({
-        name: input.name,
+      await ctx.db.transaction(async (db) => {
+        await db.insert(posts).values({
+          content: input.content,
+          title: input.title,
+          authorId: ctx.session.userId,
+        });
       });
     }),
 

@@ -3,7 +3,6 @@
 
 import { sql, relations } from "drizzle-orm";
 import {
-  uniqueIndex,
   pgTableCreator,
   serial,
   timestamp,
@@ -34,8 +33,8 @@ export const users = createTable("users", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  posts: many(posts),
-  comments: many(comments),
+  posts: many(posts, { relationName: "author_posts" }),
+  comments: many(comments, { relationName: "author_comments" }),
 }));
 
 export const posts = createTable("post", {
@@ -50,8 +49,12 @@ export const posts = createTable("post", {
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
-  author: one(users, { fields: [posts.authorId], references: [users.id] }),
-  comments: many(comments),
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+    relationName: "author_posts",
+  }),
+  comments: many(comments, { relationName: "post_comments" }),
 }));
 
 export const comments = createTable("comments", {
@@ -66,18 +69,21 @@ export const comments = createTable("comments", {
   updatedAt: timestamp("updatedAt"),
 });
 
-export const commentHierarchyRelations = relations(
-  comments,
-  ({ one, many }) => ({
-    parent: one(comments, {
-      fields: [comments.parentId],
-      references: [comments.id],
-    }),
-    children: many(comments),
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  author: one(users, {
+    fields: [comments.authorId],
+    references: [users.id],
+    relationName: "author_comments",
   }),
-);
-
-export const commentsRelations = relations(comments, ({ one }) => ({
-  author: one(users, { fields: [comments.authorId], references: [users.id] }),
-  post: one(posts, { fields: [comments.postId], references: [posts.id] }),
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+    relationName: "post_comments",
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: "comment_children",
+  }),
+  children: many(comments, { relationName: "comment_children" }),
 }));
