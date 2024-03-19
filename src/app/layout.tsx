@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`font-[var(--font-sans)] ${inter.variable}`}>
+        <body className={`font-variable-sans ${inter.variable}`}>
           <TRPCReactProvider>{children}</TRPCReactProvider>
         </body>
       </html>
