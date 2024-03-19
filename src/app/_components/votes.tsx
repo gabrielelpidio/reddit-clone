@@ -18,44 +18,59 @@ const Votes = async ({
 
   const userId = session.userId!;
 
-  const userVote = db.$with("sq").as(
-    db
-      .select({
-        value: sum(schema.votes.value).mapWith(Number).as("value"),
-      })
-      .from(schema.votes)
-      .where(
-        and(eq(schema.votes.userId, userId), eq(schema.votes.postId, parentId)),
-      )
-      .limit(1),
-  );
+  const userVoteDB = userId
+    ? db
+        .select({
+          values: sum(schema.votes.value).mapWith(Number),
+        })
+        .from(schema.votes)
+        .where(
+          and(
+            eq(schema.votes.userId, userId),
+            eq(
+              parentType === "comment"
+                ? schema.votes.commentId
+                : schema.votes.postId,
+              parentId,
+            ),
+          ),
+        )
+        .limit(1)
+    : [];
 
-  const votesDB = await db
+  const votesDB = db
     .select({
-      postId: schema.votes.postId,
       value: sum(schema.votes.value).mapWith(Number),
-      userVote: sum(userVote.value).mapWith(Number),
     })
     .from(schema.votes)
-    .where((table) => eq(table.postId, parentId))
+    .where(
+      eq(
+        parentType === "comment" ? schema.votes.commentId : schema.votes.postId,
+        parentId,
+      ),
+    )
     .groupBy(schema.votes.postId);
 
-  const votes = votesDB[0];
+  const [votesResolved, userVoteResolved] = await Promise.all([
+    votesDB,
+    userVoteDB,
+  ]);
 
-  console.log(votes);
+  const votes = votesResolved[0];
+  const userVote = userVoteResolved[0];
 
   return (
     <div className="flex flex-col items-center gap-2.5">
       <VoteButton type="upvote" parentId={parentId} parentType={parentType}>
         <ChevronsUpIcon
-          className={cn(votes?.userVote === 1 && "text-indigo-500")}
+          className={cn(userVote?.values === 1 && "text-indigo-500")}
         />
       </VoteButton>
       <span>{votes?.value ?? 0}</span>
       <VoteButton type="downvote" parentId={parentId} parentType={parentType}>
         <ChevronsUpIcon
           className={cn(
-            votes?.userVote === -1 && "text-indigo-500",
+            userVote?.values === -1 && "text-indigo-500",
             "rotate-180",
           )}
         />
