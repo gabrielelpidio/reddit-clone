@@ -51,7 +51,7 @@ const Posts = async () => {
               className="flex items-center gap-4 py-10"
               href={`/posts/${post.id}`}
             >
-              <Votes />
+              <Votes parentId={post.id} parentType="post" />
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2">
                   <Avatar size="sm">

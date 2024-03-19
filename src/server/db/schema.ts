@@ -4,11 +4,11 @@
 import { sql, relations } from "drizzle-orm";
 import {
   pgTableCreator,
-  serial,
   timestamp,
   varchar,
   text,
-  numeric,
+  smallint,
+  index,
 } from "drizzle-orm/pg-core";
 
 import { createId } from "@paralleldrive/cuid2";
@@ -38,6 +38,7 @@ export const users = createTable("users", {
 export const usersRelations = relations(users, ({ many }) => ({
   posts: many(posts, { relationName: "author_posts" }),
   comments: many(comments, { relationName: "author_comments" }),
+  votes: many(votes, { relationName: "user_votes" }),
 }));
 
 export const posts = createTable("post", {
@@ -60,6 +61,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     relationName: "author_posts",
   }),
   comments: many(comments, { relationName: "post_comments" }),
+  votes: many(votes, { relationName: "post_votes" }),
 }));
 
 export const comments = createTable("comments", {
@@ -92,5 +94,46 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     references: [comments.id],
     relationName: "comment_children",
   }),
+  votes: many(votes, { relationName: "comment_votes" }),
   children: many(comments, { relationName: "comment_children" }),
+}));
+
+export const votes = createTable(
+  "votes",
+  {
+    id: varchar("id", { length: 128 })
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: varchar("user_id", { length: 256 }).notNull(),
+    postId: varchar("post_id", { length: 128 }),
+    commentId: varchar("comment_id", { length: 128 }),
+    value: smallint("value").notNull(),
+    createdAt: timestamp("created_at")
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updatedAt"),
+  },
+  (table) => ({
+    postIdIdx: index("post_id_idx").on(table.postId),
+    commentIdIdx: index("comment_id_idx").on(table.commentId),
+    userIdIdx: index("user_id_idx").on(table.userId),
+  }),
+);
+
+export const votesRelations = relations(votes, ({ one }) => ({
+  user: one(users, {
+    fields: [votes.userId],
+    references: [users.id],
+    relationName: "user_votes",
+  }),
+  post: one(posts, {
+    fields: [votes.postId],
+    references: [posts.id],
+    relationName: "post_votes",
+  }),
+  comment: one(comments, {
+    fields: [votes.commentId],
+    references: [comments.id],
+    relationName: "comment_votes",
+  }),
 }));

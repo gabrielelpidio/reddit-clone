@@ -19,7 +19,7 @@ export interface VoteButtonProps
   asChild?: boolean;
 }
 
-const VoteButton = React.forwardRef<HTMLButtonElement, VoteButtonProps>(
+const BaseVoteButton = React.forwardRef<HTMLButtonElement, VoteButtonProps>(
   ({ className, variant, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
 
@@ -32,6 +32,6 @@ const VoteButton = React.forwardRef<HTMLButtonElement, VoteButtonProps>(
     );
   },
 );
-VoteButton.displayName = "Button";
+BaseVoteButton.displayName = "Button";
 
-export default VoteButton;
+export default BaseVoteButton;
