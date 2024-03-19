@@ -1,3 +1,4 @@
+import { SignedIn } from "@clerk/nextjs";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,7 +24,9 @@ const Page = async ({ params: { id } }: { params: { id: string } }) => {
         Back to posts
       </Link>
       <PostCard post={post}></PostCard>
-      <CreateComment postId={post.id} />
+      <SignedIn>
+        <CreateComment postId={post.id} />
+      </SignedIn>
       <hr className="py divide-x bg-gray-200" />
       <h4 className="text-sm font-medium"> All comments </h4>
       <Comments postId={post.id}></Comments>

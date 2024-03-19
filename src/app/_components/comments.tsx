@@ -12,6 +12,8 @@ import {
   CollapsibleContent,
 } from "./ui/collapsible";
 import CommentIcon from "./icons/comment";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Link from "next/link";
 
 type PostId = (typeof schema.posts.$inferSelect)["id"];
 type Comment = typeof schema.comments.$inferSelect & {
@@ -115,10 +117,18 @@ const CommentCard = ({ children, comment }: CommentCardProps) => {
               orientation="horizontal"
               parentId={comment.id}
             />
-            <CollapsibleTrigger className="flex items-center gap-2 transition-colors data-[state='open']:text-indigo-500">
-              <CommentIcon />
-              Reply
-            </CollapsibleTrigger>
+            <SignedIn>
+              <CollapsibleTrigger className="flex items-center gap-2 transition-colors data-[state='open']:text-indigo-500">
+                <CommentIcon />
+                Reply
+              </CollapsibleTrigger>
+            </SignedIn>
+            <SignedOut>
+              <Link href="/sign-in" className="flex items-center gap-2">
+                <CommentIcon />
+                Reply
+              </Link>
+            </SignedOut>
           </div>
           <CollapsibleContent className="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0">
             <CreateComment postId={comment.postId} parentId={comment.id} />
