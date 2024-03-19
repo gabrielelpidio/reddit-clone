@@ -33,7 +33,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </SignedIn>
         </div>
       </aside>
-      <main className="w-full flex-shrink flex-grow">{children}</main>
+      <main className="w-full flex-shrink flex-grow">
+        <div className="flex">
+          <div className="w-[143px] flex-shrink flex-grow-0"></div>
+          <section className="mr-auto flex max-h-[100dvh] w-full max-w-[600px] flex-shrink-0 flex-col gap-10 overflow-hidden py-6">
+            {children}
+          </section>
+        </div>
+      </main>
     </div>
   );
 }
