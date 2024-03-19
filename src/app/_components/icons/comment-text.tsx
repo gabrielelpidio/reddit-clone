@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const CommentText = React.forwardRef<
+const CommentTextIcon = React.forwardRef<
   SVGSVGElement,
   React.SVGProps<SVGSVGElement>
 >((props, ref) => {
@@ -25,6 +25,6 @@ const CommentText = React.forwardRef<
   );
 });
 
-CommentText.displayName = "CommentText";
+CommentTextIcon.displayName = "CommentTextIcon";
 
-export default CommentText;
+export default CommentTextIcon;

@@ -10,9 +10,11 @@ import { cn } from "~/lib/utils";
 const Votes = async ({
   parentId,
   parentType = "post",
+  orientation = "vertical",
 }: {
   parentId: string;
   parentType: "comment" | "post";
+  orientation?: "horizontal" | "vertical";
 }) => {
   const session = auth();
 
@@ -60,7 +62,12 @@ const Votes = async ({
   const userVote = userVoteResolved[0];
 
   return (
-    <div className="flex flex-col items-center gap-2.5">
+    <div
+      className={cn(
+        "flex items-center gap-2.5",
+        orientation === "vertical" && "flex-col",
+      )}
+    >
       <VoteButton type="upvote" parentId={parentId} parentType={parentType}>
         <ChevronsUpIcon
           className={cn(userVote?.values === 1 && "text-indigo-500")}
