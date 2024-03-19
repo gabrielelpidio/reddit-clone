@@ -1,5 +1,9 @@
-import { SignUp } from "@clerk/nextjs";
+import { SignIn } from "@clerk/nextjs";
 
 export default function Page() {
-  return <SignUp />;
+  return (
+    <div className="grid min-h-[100dvh] place-items-center">
+      <SignIn />;
+    </div>
+  );
 }
