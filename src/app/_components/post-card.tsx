@@ -51,10 +51,18 @@ const PostCard = ({ post }: { post: Post }) => {
         <div className="flex flex-col gap-1.5">
           <div className="flex items-center gap-2">
             <Avatar size="sm">
-              <AvatarImage src={post.author.profilePicture ?? undefined} />
-              <AvatarFallback>
-                <UserRoundIcon className="size-8" />
-              </AvatarFallback>
+              {post.author.profilePicture ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={post.author.profilePicture}
+                  className="size-full rounded-full object-cover"
+                  alt={post.author.firstName + " " + post.author.lastName}
+                ></img>
+              ) : (
+                <AvatarFallback>
+                  <UserRoundIcon className="size-8" />
+                </AvatarFallback>
+              )}
             </Avatar>
             <div className="text-gray-600">
               Posted by {post.author.username}

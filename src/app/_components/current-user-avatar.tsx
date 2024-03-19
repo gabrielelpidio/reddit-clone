@@ -13,10 +13,18 @@ const UserAvatar = ({
   const user = useUser();
   return (
     <Avatar size={size}>
-      <AvatarImage src={user.user?.imageUrl} />
-      <AvatarFallback>
-        <UserRoundIcon className="size-8" />
-      </AvatarFallback>
+      {user.user?.imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={user.user.imageUrl}
+          className="size-full rounded-full object-cover"
+          alt={user.user.fullName ?? "Profile picture"}
+        ></img>
+      ) : (
+        <AvatarFallback>
+          <UserRoundIcon className="size-8" />
+        </AvatarFallback>
+      )}
     </Avatar>
   );
 };
